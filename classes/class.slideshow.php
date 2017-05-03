@@ -24,6 +24,8 @@ class Slideshow
 	public function defineHooks()
 	{
 		$this->loader->addAction('init', $this, 'addPostType');
+		$admin = new Admin();
+		$this->loader->addAction('admin_menu', $admin, 'addSettingsPage');
 	}
 
 	public function addPostType()
@@ -37,12 +39,38 @@ class Slideshow
 	private function loadDependencies()
 	{
 		require_once plugin_dir_path(__FILE__) . 'class.loader.php';
+		require_once plugin_dir_path(__FILE__) . 'class.admin.php';
 		$this->loader = new Loader();
 	}
 
 	public function init()
 	{
 		$this->loader->init();
+	}
+
+	public static function setTable()
+	{
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . 'sliders';
+
+		if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name)
+		{
+			$charset = $wpdb->get_charset_collate();
+			
+			$query   = "CREATE TABLE $table_name (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			post_id mediumint(9) NOT NULL,
+			text text DEFAULT '' NOT NULL,
+			image mediumint(9) NOT NULL,
+			PRIMARY KEY  (id)
+			) $charset;";
+
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			dbDelta($query);  
+		}
+
+		return false;
 	}
 
 	public function getVersion()
