@@ -23,17 +23,10 @@ class Slideshow
 
 	public function defineHooks()
 	{
-		$this->loader->addAction('init', $this, 'addPostType');
 		$admin = new Admin();
+		$this->loader->addAction('init', $admin, 'addPostType');
+		$this->loader->addAction('add_meta_boxes', $admin, 'addMetaBoxes');
 		$this->loader->addAction('admin_menu', $admin, 'addSettingsPage');
-	}
-
-	public function addPostType()
-	{
-		register_post_type('slideshow',[
-			'label'  => 'Slideshows',
-			'public' => true,
-		]);
 	}
 
 	private function loadDependencies()
