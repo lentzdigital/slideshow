@@ -8,6 +8,9 @@ class Admin
 		register_post_type('slideshow',[
 			'label'  => 'Slideshows',
 			'public' => true,
+			'supports' => [
+				'title'
+			]
 		]);
 	}
 
@@ -22,26 +25,36 @@ class Admin
 		);
 	}
 
-	public function addImageMetaBox()
+	public function getSlides($post)
 	{
-		echo '<h2>Test</h2>';
+		global $wpdb;
+		$table = $wpdb->prefix . 'sliders';
+
+		$query = $wpdb->get_results("SELECT text, image FROM $table WHERE post_id = $post->ID");
+
+		return $query;
 	}
 
-	public function addSettingsPage()
+	public function addImageMetaBox($post_id)
 	{
-		add_menu_page(
-			'Slider',
-			'Slider',
-			'manage_options',
-			'slider.php',
-			[$this, 'settingsPageView'],
-			'f233',
-			20
-		);
+		require_once plugin_dir_path(__FILE__) . '../views/view.images_meta_box.php';
 	}
 
-	public function settingsPageView()
+	public function saveSlide($post_id)
 	{
-		require_once plugin_dir_path(__FILE__) . '../views/view.overview.php';
+		global $wpdb;
+
+		$current_id = $post_id;
+		$url        = $_POST['image_url'];
+		$text       = $_POST['image_text'];
+
+		foreach($url as $key => $n)
+		{
+			$wpdb->insert($wpdb->prefix . 'sliders', [
+				'post_id' => $current_id,
+				'text' => $text[$key],
+				'image' => $url[$key]
+			]);
+		}
 	}
 }

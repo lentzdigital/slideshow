@@ -18,7 +18,8 @@ class Slideshow
 
 	public function addResources()
 	{
-		// Styles and scripts goes here
+		wp_enqueue_media();
+		wp_enqueue_script('imagepicker', plugin_dir_url( __FILE__ ) . '../assets/js/imagepicker.js', ['jquery'], false, true);
 	}
 
 	public function defineHooks()
@@ -26,7 +27,8 @@ class Slideshow
 		$admin = new Admin();
 		$this->loader->addAction('init', $admin, 'addPostType');
 		$this->loader->addAction('add_meta_boxes', $admin, 'addMetaBoxes');
-		$this->loader->addAction('admin_menu', $admin, 'addSettingsPage');
+		$this->loader->addAction('admin_enqueue_scripts', $this, 'addResources');
+		$this->loader->addAction('save_post', $admin, 'saveSlide');
 	}
 
 	private function loadDependencies()
@@ -55,7 +57,7 @@ class Slideshow
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			post_id mediumint(9) NOT NULL,
 			text text DEFAULT '' NOT NULL,
-			image mediumint(9) NOT NULL,
+			image text NOT NULL,
 			PRIMARY KEY  (id)
 			) $charset;";
 
