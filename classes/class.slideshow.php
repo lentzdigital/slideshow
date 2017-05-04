@@ -28,7 +28,9 @@ class Slideshow
 		$this->loader->addAction('init', $admin, 'addPostType');
 		$this->loader->addAction('add_meta_boxes', $admin, 'addMetaBoxes');
 		$this->loader->addAction('admin_enqueue_scripts', $this, 'addResources');
-		$this->loader->addAction('save_post', $admin, 'saveSlide');
+		$this->loader->addAction('save_post_slideshow', $admin, 'saveSlide');
+
+		add_shortcode('slider', [$admin, 'addShortcode']);
 	}
 
 	private function loadDependencies()

@@ -43,6 +43,7 @@ class Admin
 	public function saveSlide($post_id)
 	{
 		global $wpdb;
+		global $post;
 
 		$current_id = $post_id;
 		$url        = $_POST['image_url'];
@@ -56,5 +57,17 @@ class Admin
 				'image' => $url[$key]
 			]);
 		}
+	}
+
+	public static function addShortcode($atts)
+	{
+		$slider_id = $atts['slider_id'];
+
+		global $wpdb;
+		$table = $wpdb->prefix . 'sliders';
+
+		$query = $wpdb->get_results("SELECT text, image FROM $table WHERE post_id = $slider_id");
+
+		require_once plugin_dir_path(__FILE__) . '../views/view.shortcode.php';	
 	}
 }
